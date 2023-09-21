@@ -1,0 +1,81 @@
+---
+title: "R markdown in class memo"
+author: "Alvina Chan"
+date: "2023-09-21"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+## This is my level 1 heading (2 hashes)
+
+### This is my level 2 heading (3 hashes)
+
+#### This is my level 3 heading (4 hashes)
+
+##### This is my leve 4 heading (5 hashes)
+
+This is my main text. POLI3148 is the course
+
+# **Add code to your document (put a slash then there will be options then select r code chunk)**
+
+```{r}
+log(50)
+```
+
+```{r}
+1+1
+
+```
+
+# Output Figures
+
+```{r}
+plot(1:10, 1:10)
+```
+
+# Display data (cars data as test)
+
+```{r}
+cars
+```
+
+# Use Tools, Global options then click R Markdown for preview in pane / evaluate by project
+
+# Inline R code
+
+Scientific research shows that 12223+12111 =
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+install.packages("tinytex")
+
+```{r}
+#install.packages("tinytex")
+#tinytext::instal>tinytex()
+#```install.packages("tinytex")
+#tinytex::install_tinytex()
+
+
+# ```{r}
+#install.packages("tinytex")
+#tinytex::install_tinytex()
+
+
+
+```
