@@ -1,0 +1,127 @@
+---
+title: "Correlation"
+author: "Alvina Chan"
+date: "2023-11-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
+library(ggcorrplot)
+
+```
+
+```{r}
+d_cor <- read.csv("data/FAO_data_China_psvexim.csv")
+```
+
+```{r}
+?pivot_wider
+names(d_cor)
+d_wide <- d_cor %>% select(Year,Element,Value) %>% pivot_wider(names_from = Element,values_from = Value)
+```
+
+```{r}
+# Basic scatter plot
+library(ggpubr)
+d_wide |> filter(`Stock Variation`< 10000000)|>
+  ggplot(aes(x=`Export Quantity`, y=`Stock Variation`)) + geom_point() + geom_smooth(method=lm, se=FALSE) + stat_cor(method = "spearman")
+# Change the point size, and shape
+
+```
+
+```{r}
+d_wide |>
+  ggplot(aes(x=`Export Quantity`, y=Production)) + geom_point() + geom_smooth(method=lm, se=FALSE) + stat_cor(method = "spearman")
+```
+
+```{r}
+install.packages("GGally")
+library(GGally)
+
+d_wide |> filter(`Stock Variation`< 10000000)|> 
+  select(-Year) |> ggpairs()
+```
+
+```{r}
+d_cor61_21 <- read.csv("data/FAO_China_exim_1961-2021.csv")
+```
+
+```{r}
+d_wide1 <- d_cor61_21 %>% select(Year,Element,Value) %>% pivot_wider(names_from = Element,values_from = Value) |> filter(Year>1985)
+```
+
+```{r}
+dr_China_61_21 <- read.csv("data/FAO_China_rice_p_1961-2021.csv")
+
+dr_China_61_21a <- dr_China_61_21 |> filter(Area == "China")
+
+dr_China_86_21 <- dr_China_61_21a %>% select(Year, Element, Value)|> filter(Year > 1985)
+
+d_wide2 <- d_wide1 |> left_join(dr_China_86_21, by="Year") 
+```
+
+```{r}
+install.packages("GGally")
+library(GGally)
+
+d_wide2 |>  select(-Year) |> ggpairs()
+```
+
+```{r}
+d_wide2 |> ggplot(aes(x=Value, y=`Export Quantity`)) + geom_point() + geom_smooth(method=lm, se=FALSE) + stat_cor(method = "spearman") + labs(x = "Production Quantity")
+```
+
+```{r}
+d_wide2 |>
+  ggplot(aes(x=`Value`, y=`Import Quantity`)) + geom_point() + geom_smooth(method=lm, se=FALSE) + stat_cor(method = "pearson") + labs(x = "Production Quantity")
+```
+
+```{r}
+d_wide2 |>
+  ggplot(aes(x=`Import Quantity`, y=`Export Quantity`)) + geom_point() + geom_smooth(method=lm, se=FALSE) + stat_cor(method = "spearman")
+```
+
+```{r}
+d_wide2 |>
+  ggplot(aes(x=`Value`, y=`Export Value`)) + geom_point() + geom_smooth(method=lm, se=FALSE) + stat_cor(method = "spearman") + labs(x = "Production Quantity")
+```
+
+```{r}
+d_wide3 <- d_wide2|> mutate ("Export Quantity (mt)" = `Export Quantity`*100)
+
+d_wide4 <- d_wide3 |> mutate ("EQ % of Production" = `Export Quantity (mt)`/ Value *100) 
+
+
+d_wide4 |> ggplot() + geom_bar(aes(x = `Year`, y = `Export Quantity (mt)`), stat="identity") + geom_line(aes(x = Year, y = `EQ % of Production`*100/3),color="red") + scale_y_continuous("Export Quantity (mt)", sec.axis = sec_axis(~ (. )/3000000, name = " Export as % of Global Rice Production"))
+```
+
+```{r}
+d_wide4 |> ggplot(aes(x=Value, y=`Export Quantity (mt)`)) + geom_point() + geom_smooth(method=lm, se=FALSE) + stat_cor(method = "spearman") + labs(x = "Production Quantity")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
